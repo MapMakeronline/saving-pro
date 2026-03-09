@@ -1,0 +1,10 @@
+if (typeof firebase === 'undefined') throw new Error('hosting/init-error: Firebase SDK not detected. You must include it before /__/firebase/init.js');
+firebase.initializeApp({
+  "apiKey": "AIzaSyB5IQnMAR5vnaHdVg0gyBhppgygxzabayg",
+  "appId": "1:996102562843:web:ad81bc17c55bebb44f04be",
+  "authDomain": "saving-pro-finance.firebaseapp.com",
+  "databaseURL": "",
+  "messagingSenderId": "996102562843",
+  "projectId": "saving-pro-finance",
+  "storageBucket": "saving-pro-finance.firebasestorage.app"
+});

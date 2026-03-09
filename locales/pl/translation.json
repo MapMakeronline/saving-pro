@@ -1,0 +1,19 @@
+{
+  "common": {
+    "appName": "Saving Pro",
+    "slogan": "Z nami oszczędzanie wydaje się proste",
+    "login": "Zaloguj się",
+    "register": "Załóż konto",
+    "logout": "Wyloguj się",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "add": "Dodaj"
+  },
+  "landing": {
+    "hero": "Z nami oszczędzanie wydaje się proste",
+    "subtitle": "Zarządzaj swoim budżetem i osiągaj finansowe cele",
+    "cta": "Zacznij za darmo"
+  }
+}
