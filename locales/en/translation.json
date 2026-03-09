@@ -1,0 +1,19 @@
+{
+  "common": {
+    "appName": "Saving Pro",
+    "slogan": "With us, saving seems simple",
+    "login": "Sign in",
+    "register": "Sign up",
+    "logout": "Sign out",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add"
+  },
+  "landing": {
+    "hero": "With us, saving seems simple",
+    "subtitle": "Manage your budget and achieve your financial goals",
+    "cta": "Get started free"
+  }
+}
