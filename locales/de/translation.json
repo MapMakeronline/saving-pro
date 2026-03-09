@@ -1,0 +1,19 @@
+{
+  "common": {
+    "appName": "Saving Pro",
+    "slogan": "Sparen leicht gemacht",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen"
+  },
+  "landing": {
+    "hero": "Sparen leicht gemacht",
+    "subtitle": "Verwalten Sie Ihr Budget und erreichen Sie Ihre finanziellen Ziele",
+    "cta": "Kostenlos starten"
+  }
+}
