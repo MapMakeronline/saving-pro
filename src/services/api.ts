@@ -1,14 +1,16 @@
 import axios from 'axios'
+import { auth } from '../lib/firebase'
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : 'http://localhost:5000/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
-// Attach token to every request
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
+// Attach Firebase token to every request (never from localStorage)
+api.interceptors.request.use(async (config) => {
+  const user = auth.currentUser
+  if (user) {
+    const token = await user.getIdToken()
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
@@ -24,7 +26,6 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
       window.location.href = '/login'
     }
     return Promise.reject(error)

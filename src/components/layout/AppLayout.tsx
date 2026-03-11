@@ -15,27 +15,25 @@ export default function AppLayout() {
   const location = useLocation()
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
-      {/* Desktop sidebar (always shown) */}
+    <div className="flex min-h-screen bg-slate-50 dark:bg-[#030712]">
       <div className="hidden lg:flex">
         <Sidebar />
       </div>
-
-      {/* Mobile sidebar (drawer) */}
       <div className="lg:hidden">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       </div>
 
       <main className="flex-1 overflow-auto min-w-0">
-        {/* Mobile top bar */}
-        <div className="lg:hidden sticky top-0 z-20 flex items-center gap-4 px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="lg:hidden sticky top-0 z-20 flex items-center gap-4 px-4 py-3 bg-white dark:bg-[#070d1a] border-b border-slate-200 dark:border-white/5">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors"
+            className="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
           >
             <Menu size={22} />
           </button>
-          <span className="font-bold text-blue-500 text-lg">Saving Pro</span>
+          <span className="font-black text-slate-900 dark:text-white text-[15px]">
+            Saving<span className="text-teal-500 dark:text-teal-400">Pro</span>
+          </span>
         </div>
         <AnimatePresence mode="wait">
           <motion.div

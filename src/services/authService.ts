@@ -2,6 +2,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  sendEmailVerification,
   GoogleAuthProvider,
   GithubAuthProvider,
   FacebookAuthProvider,
@@ -39,6 +40,7 @@ export const authService = {
     const now = new Date().toISOString()
     const profileData = { name: credentials.name, currency: 'PLN', language: 'pl', createdAt: now, updatedAt: now }
     await setDoc(doc(db, 'users', fb.uid), profileData)
+    await sendEmailVerification(fb)
     const token = await fb.getIdToken()
     const user = { id: fb.uid, email: fb.email!, ...profileData }
     return { token, user }

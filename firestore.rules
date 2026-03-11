@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Użytkownik może czytać i pisać tylko swój własny profil
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Transakcje - tylko właściciel
+    match /transactions/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Kategorie - tylko właściciel
+    match /categories/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Budżety - tylko właściciel
+    match /budgets/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Cele - tylko właściciel
+    match /goals/{docId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Weryfikacja emaila - token może być tworzony przez zalogowanego użytkownika,
+    // walidacja (odczyt + aktualizacja) przez kogokolwiek (link z maila)
+    match /emailVerifications/{token} {
+      allow create: if request.auth != null;
+      allow read, update: if true; // potrzebne do weryfikacji bez logowania
+    }
+
+    // Blokuj wszystko inne
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
