@@ -12,6 +12,10 @@ interface AuthState {
 
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, name: string) => Promise<void>
+  loginWithGoogle: () => Promise<void>
+  loginWithGithub: () => Promise<void>
+  loginWithFacebook: () => Promise<void>
+  loginWithMicrosoft: () => Promise<void>
   logout: () => Promise<void>
   fetchProfile: () => Promise<void>
   clearError: () => void
@@ -45,7 +49,12 @@ export const useAuthStore = create<AuthState>((set) => {
         const { token, user } = await authService.login({ email, password })
         set({ token, user, isLoading: false })
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Błąd logowania'
+        const code = (err as { code?: string }).code
+        const message =
+          code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found' ? 'Nieprawidłowy e-mail lub hasło.' :
+          code === 'auth/too-many-requests' ? 'Za dużo prób logowania. Spróbuj ponownie za chwilę.' :
+          code === 'auth/invalid-email' ? 'Podaj prawidłowy adres e-mail.' :
+          err instanceof Error ? err.message : 'Błąd logowania'
         set({ error: message, isLoading: false })
         throw err
       }
@@ -57,8 +66,77 @@ export const useAuthStore = create<AuthState>((set) => {
         const { token, user } = await authService.register({ email, password, name })
         set({ token, user, isLoading: false })
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Błąd rejestracji'
+        const code = (err as { code?: string }).code
+        const message =
+          code === 'auth/email-already-in-use' ? 'Konto z tym adresem e-mail już istnieje. Zaloguj się.' :
+          code === 'auth/weak-password' ? 'Hasło jest za słabe. Użyj minimum 6 znaków.' :
+          code === 'auth/invalid-email' ? 'Podaj prawidłowy adres e-mail.' :
+          err instanceof Error ? err.message : 'Błąd rejestracji'
         set({ error: message, isLoading: false })
+        throw err
+      }
+    },
+
+    loginWithGoogle: async () => {
+      set({ isLoading: true, error: null })
+      try {
+        const { token, user } = await authService.loginWithGoogle()
+        set({ token, user, isLoading: false })
+      } catch (err: unknown) {
+        const code = (err as { code?: string }).code
+        if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
+          set({ error: 'Błąd logowania przez Google', isLoading: false })
+        } else {
+          set({ isLoading: false })
+        }
+        throw err
+      }
+    },
+
+    loginWithGithub: async () => {
+      set({ isLoading: true, error: null })
+      try {
+        const { token, user } = await authService.loginWithGithub()
+        set({ token, user, isLoading: false })
+      } catch (err: unknown) {
+        const code = (err as { code?: string }).code
+        if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
+          set({ error: 'Błąd logowania przez GitHub', isLoading: false })
+        } else {
+          set({ isLoading: false })
+        }
+        throw err
+      }
+    },
+
+    loginWithFacebook: async () => {
+      set({ isLoading: true, error: null })
+      try {
+        const { token, user } = await authService.loginWithFacebook()
+        set({ token, user, isLoading: false })
+      } catch (err: unknown) {
+        const code = (err as { code?: string }).code
+        if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
+          set({ error: 'Błąd logowania przez Facebook', isLoading: false })
+        } else {
+          set({ isLoading: false })
+        }
+        throw err
+      }
+    },
+
+    loginWithMicrosoft: async () => {
+      set({ isLoading: true, error: null })
+      try {
+        const { token, user } = await authService.loginWithMicrosoft()
+        set({ token, user, isLoading: false })
+      } catch (err: unknown) {
+        const code = (err as { code?: string }).code
+        if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
+          set({ error: 'Błąd logowania przez Microsoft', isLoading: false })
+        } else {
+          set({ isLoading: false })
+        }
         throw err
       }
     },

@@ -2,6 +2,11 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
@@ -50,6 +55,41 @@ export const authService = {
     if (!fb) throw new Error('Nie zalogowany')
     await updateDoc(doc(db, 'users', fb.uid), { ...updates, updatedAt: new Date().toISOString() })
     return buildUser(fb.uid, fb.email!)
+  },
+
+  async loginWithProvider(provider: GoogleAuthProvider | GithubAuthProvider | FacebookAuthProvider | OAuthProvider): Promise<AuthResponse> {
+    const { user: fb } = await signInWithPopup(auth, provider)
+    const ref = doc(db, 'users', fb.uid)
+    const snap = await getDoc(ref)
+    if (!snap.exists()) {
+      const now = new Date().toISOString()
+      await setDoc(ref, {
+        name: fb.displayName || '',
+        currency: 'PLN',
+        language: 'pl',
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
+    const token = await fb.getIdToken()
+    const user = await buildUser(fb.uid, fb.email!)
+    return { token, user }
+  },
+
+  async loginWithGoogle(): Promise<AuthResponse> {
+    return this.loginWithProvider(new GoogleAuthProvider())
+  },
+
+  async loginWithGithub(): Promise<AuthResponse> {
+    return this.loginWithProvider(new GithubAuthProvider())
+  },
+
+  async loginWithFacebook(): Promise<AuthResponse> {
+    return this.loginWithProvider(new FacebookAuthProvider())
+  },
+
+  async loginWithMicrosoft(): Promise<AuthResponse> {
+    return this.loginWithProvider(new OAuthProvider('microsoft.com'))
   },
 
   async logout(): Promise<void> {

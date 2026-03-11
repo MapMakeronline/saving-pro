@@ -10,6 +10,7 @@ import BudgetGoals from './pages/BudgetGoals'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import Profile from './pages/Profile'
+import VerifyEmailPage from './pages/VerifyEmailPage'
 import NotFound404 from './pages/NotFound404'
 import AppLayout from './components/layout/AppLayout'
 import ProtectedRoute from './components/common/ProtectedRoute'
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/verify" element={<VerifyEmailPage />} />
 
       {/* Private Routes – wrapped with AppLayout + ProtectedRoute */}
       <Route
