@@ -70,13 +70,6 @@ function Shiny({ children }: { children: React.ReactNode }) {
 /* ─────────────────────────────────────────────
    FAQ
 ───────────────────────────────────────────── */
-const FAQ_DATA = [
-  { q: 'Czy Saving Pro jest darmowe?', a: 'Tak! Saving Pro jest w pełni darmowe. Możesz rejestrować transakcje, tworzyć budżety i śledzić cele oszczędnościowe bez żadnych opłat.' },
-  { q: 'Czy moje dane są bezpieczne?', a: 'Tak. Wszystkie dane są szyfrowane (SSL/TLS) i przechowywane na bezpiecznych serwerach. Nigdy nie udostępniamy ich osobom trzecim.' },
-  { q: 'Czy mogę używać aplikacji w kilku walutach?', a: 'Aktualnie możesz wybrać jedną walutę domyślną (PLN, EUR, USD, GBP, CHF). Obsługa wielu walut jednocześnie jest planowana w kolejnych wersjach.' },
-  { q: 'Jak dodać transakcję?', a: 'Przejdź do zakładki „Transakcje" i kliknij przycisk „+ Nowa transakcja". Wypełnij formularz z kwotą, kategorią i datą.' },
-  { q: 'Czy mogę eksportować dane?', a: 'Tak – eksport do CSV jest dostępny bezpośrednio ze strony Raporty. Eksport PDF planujemy w kolejnej wersji.' },
-]
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false)
@@ -112,16 +105,10 @@ const LANGS = [
 /* ─────────────────────────────────────────────
    NAVBAR
 ───────────────────────────────────────────── */
-const navLinks = [
-  { label: 'Możliwości', href: '#features' },
-  { label: 'Jak działa', href: '#how' },
-  { label: 'FAQ', href: '#faq' },
-]
-
 function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => void }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const th = useTheme()
 
   useEffect(() => {
@@ -129,6 +116,12 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
   }, [])
+
+  const navLinks = [
+    { label: t('landing.navFeatures'), href: '#features' },
+    { label: t('landing.navHow'), href: '#how' },
+    { label: t('landing.navFaq'), href: '#faq' },
+  ]
 
   const changeLang = (code: string) => {
     i18n.changeLanguage(code)
@@ -150,7 +143,7 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
         </Link>
 
         {/* Center links */}
-        <ul className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
+        <ul className="hidden items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
           {navLinks.map(l => (
             <li key={l.href}>
               <a href={l.href} className={`px-4 py-2 text-sm font-medium ${th.navText} ${th.navTextHover} ${th.hoverBg} rounded-xl transition-all duration-200`}>
@@ -160,52 +153,11 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
           ))}
         </ul>
 
-        {/* Desktop right */}
-        <div className="hidden md:flex items-center gap-2">
-          {/* Language switcher */}
-          <div className="flex items-center gap-0.5 mr-1">
-            {LANGS.map(lang => (
-              <button
-                key={lang.code}
-                onClick={() => changeLang(lang.code)}
-                title={lang.flag + ' ' + lang.label}
-                className={`px-2 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                  i18n.language === lang.code
-                    ? `${th.tealBg} ${th.teal} border ${th.tealBorder}`
-                    : `${th.navText} border border-transparent ${th.hoverBg}`
-                }`}
-              >
-                {lang.flag} {lang.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Dark mode toggle */}
-          <button
-            onClick={toggleDark}
-            aria-label={isDark ? 'Tryb jasny' : 'Tryb ciemny'}
-            className={`w-9 h-9 flex items-center justify-center rounded-xl ${th.navText} ${th.navTextHover} ${th.hoverBg} transition-all`}
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-          </button>
-
-          <Link to="/login" className={`text-sm font-medium ${th.navText} ${th.navTextHover} px-4 py-2 rounded-xl transition-colors duration-200`}>
-            Zaloguj się
-          </Link>
-          <Link
-            to="/register"
-            className={`group inline-flex items-center gap-2 ${isDark ? 'bg-white text-[#030712] hover:bg-teal-50' : 'bg-slate-900 text-white hover:bg-slate-800'} text-sm font-extrabold px-6 py-3 rounded-2xl transition-all shadow-xl shadow-black/20 hover:-translate-y-0.5`}
-          >
-            Zacznij za darmo
-            <ArrowRight size={14} strokeWidth={2.5} className="group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
-
         {/* Burger */}
         <button
           onClick={() => setOpen(o => !o)}
-          className={`md:hidden w-10 h-10 flex items-center justify-center rounded-xl ${th.navText} ${th.navTextHover} ${th.hoverBg} transition-all`}
-          aria-label="Menu"
+          className={`w-10 h-10 flex items-center justify-center rounded-xl ${th.navText} ${th.navTextHover} ${th.hoverBg} transition-all`}
+          aria-label={t('landing.navFeatures') ? 'Menu' : 'Menu'}
         >
           <AnimatePresence mode="wait" initial={false}>
             {open
@@ -216,16 +168,16 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
         </button>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* Dropdown menu */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className={`md:hidden overflow-hidden backdrop-blur-2xl border-b ${th.border}`}
+            initial={{ opacity: 0, scale: 0.95, y: -8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className={`absolute top-[74px] right-5 sm:right-8 w-64 rounded-2xl border ${th.border} shadow-2xl shadow-black/20 overflow-hidden backdrop-blur-2xl z-50`}
             style={{ backgroundColor: th.bgNav }}
           >
-            <div className="max-w-7xl mx-auto px-5 py-3 flex flex-col gap-1">
+            <div className="p-2 flex flex-col gap-0.5">
               {navLinks.map((l, i) => (
                 <motion.a key={l.href} href={l.href} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }} onClick={() => setOpen(false)} className={`px-4 py-3 text-sm font-medium ${th.navText} ${th.navTextHover} ${th.hoverBg} rounded-xl transition-all`}>
                   {l.label}
@@ -255,10 +207,10 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
                 </button>
               </div>
               <Link to="/login" onClick={() => setOpen(false)} className={`px-4 py-3 text-sm font-medium ${th.navText} ${th.navTextHover} ${th.hoverBg} rounded-xl transition-all`}>
-                Zaloguj się
+                {t('landing.loginLink')}
               </Link>
               <Link to="/register" onClick={() => setOpen(false)} className="mt-1 flex items-center justify-center gap-2 bg-teal-600 text-white font-extrabold py-3.5 rounded-xl text-sm">
-                Zacznij za darmo <ArrowRight size={15} strokeWidth={2.5} />
+                {t('landing.ctaStart')} <ArrowRight size={15} strokeWidth={2.5} />
               </Link>
             </div>
           </motion.div>
@@ -426,6 +378,7 @@ function DashboardMockup() {
   const [browser] = useState<Browser>(detectBrowser)
   const bars = [55, 80, 45, 90, 60, 75, 50, 85, 65, 95, 70, 88]
   const th = useTheme()
+  const { t } = useTranslation()
 
   return (
     <motion.div
@@ -469,27 +422,27 @@ function DashboardMockup() {
           <div className="flex-1 p-5">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <div className={`text-[11px] ${th.textMuted} mb-1`}>Dzień dobry, Krzysztof 👋</div>
-                <div className={`${th.text} font-extrabold text-lg`}>Przegląd finansów</div>
+                <div className={`text-[11px] ${th.textMuted} mb-1`}>{t('landing.mockupGreeting')}</div>
+                <div className={`${th.text} font-extrabold text-lg`}>{t('landing.mockupOverview')}</div>
               </div>
               <div className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 text-green-300 text-[11px] px-3 py-1.5 rounded-full font-semibold">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                Na bieżąco
+                {t('landing.mockupStatus')}
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-5">
               {[
-                { label: 'Saldo', val: '12 450', unit: 'zł', color: '#14b8a6', icon: '↑', trend: '+8%' },
-                { label: 'Wydatki', val: '3 200', unit: 'zł', color: '#ef4444', icon: '↓', trend: '-5%' },
-                { label: 'Oszczędności', val: '9 250', unit: 'zł', color: '#22c55e', icon: '↑', trend: '+12%' },
+                { labelKey: 'landing.mockupBalance', val: '12 450', unit: 'zł', color: '#14b8a6', icon: '↑', trend: '+8%' },
+                { labelKey: 'landing.mockupExpenses', val: '3 200', unit: 'zł', color: '#ef4444', icon: '↓', trend: '-5%' },
+                { labelKey: 'landing.mockupSavings', val: '9 250', unit: 'zł', color: '#22c55e', icon: '↑', trend: '+12%' },
               ].map((c) => (
-                <div key={c.label} className={`rounded-[16px] p-3.5 border ${th.border} transition-colors`} style={{ backgroundColor: th.bgCard2 }}>
-                  <p className={`text-[10px] ${th.textMuted} mb-2 font-semibold uppercase tracking-wide`}>{c.label}</p>
+                <div key={c.labelKey} className={`rounded-[16px] p-3.5 border ${th.border} transition-colors`} style={{ backgroundColor: th.bgCard2 }}>
+                  <p className={`text-[10px] ${th.textMuted} mb-2 font-semibold uppercase tracking-wide`}>{t(c.labelKey)}</p>
                   <p className={`${th.text} font-black text-base`}>{c.val} <span className={`text-xs font-medium ${th.textSub}`}>{c.unit}</span></p>
                   <div className="mt-2 flex items-center gap-1">
                     <span className="text-[10px] font-semibold" style={{ color: c.color }}>{c.icon} {c.trend}</span>
-                    <span className={`text-[10px] ${th.textFaint}`}>vs popr.</span>
+                    <span className={`text-[10px] ${th.textFaint}`}>{t('landing.mockupVsPrev')}</span>
                   </div>
                 </div>
               ))}
@@ -497,10 +450,10 @@ function DashboardMockup() {
 
             <div className={`rounded-[16px] p-4 border ${th.border}`} style={{ backgroundColor: th.bgCard2 }}>
               <div className="flex items-center justify-between mb-3">
-                <p className={`text-xs font-semibold ${th.textSub}`}>Przychody vs wydatki</p>
+                <p className={`text-xs font-semibold ${th.textSub}`}>{t('landing.mockupChart')}</p>
                 <div className={`flex items-center gap-3 text-[10px] ${th.textMuted}`}>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-teal-500 inline-block" />Przychody</span>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-red-400/60 inline-block" />Wydatki</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-teal-500 inline-block" />{t('landing.mockupIncomes')}</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-red-400/60 inline-block" />{t('landing.mockupExpenses')}</span>
                 </div>
               </div>
               <div className="flex items-end gap-1.5 h-[78px]">
@@ -512,7 +465,7 @@ function DashboardMockup() {
                 ))}
               </div>
               <div className="flex justify-between mt-1.5">
-                {['Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'].map(m => (
+                {t('landing.mockupMonths').split(',').map(m => (
                   <span key={m} className={`text-[8px] ${th.textFaint} text-center flex-1`}>{m}</span>
                 ))}
               </div>
@@ -537,12 +490,21 @@ const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.12 } }
    LANDING PAGE
 ───────────────────────────────────────────── */
 export default function LandingPage() {
+  const { t } = useTranslation()
   const [isDark, setIsDark] = useState(() =>
     document.documentElement.classList.contains('dark') ||
     (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
   )
   const [email, setEmail] = useState('')
   const [newsletterSent, setNewsletterSent] = useState(false)
+
+  const FAQ_DATA = [
+    { q: t('landing.faq1q'), a: t('landing.faq1a') },
+    { q: t('landing.faq2q'), a: t('landing.faq2a') },
+    { q: t('landing.faq3q'), a: t('landing.faq3a') },
+    { q: t('landing.faq4q'), a: t('landing.faq4a') },
+    { q: t('landing.faq5q'), a: t('landing.faq5a') },
+  ]
 
   const toggleDark = () => {
     const next = !isDark
@@ -581,8 +543,12 @@ export default function LandingPage() {
 
   return (
     <ThemeCtx.Provider value={isDark}>
+      <style>{`
+        .landing-page * { cursor: default !important; }
+        .landing-page a, .landing-page button { cursor: pointer !important; }
+      `}</style>
       <div
-        className="min-h-screen overflow-x-hidden transition-colors duration-300"
+        className="landing-page min-h-screen overflow-x-hidden transition-colors duration-300"
         style={{ backgroundColor: th.bg, color: isDark ? 'white' : '#0f172a' }}
       >
         <Navbar isDark={isDark} toggleDark={toggleDark} />
@@ -613,18 +579,18 @@ export default function LandingPage() {
             <motion.h1 variants={fadeUp} custom={0} initial="hidden" animate="visible"
               className="text-5xl sm:text-6xl md:text-[84px] font-black leading-[1.02] tracking-[-2px] mb-7"
             >
-              Ogarnij swoje finanse,
+              {t('landing.heroLine1')}
               <br />
               <span className={isDark ? 'bg-gradient-to-r from-teal-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent' : 'text-teal-600'}>
-                intuicyjnie.
+                {t('landing.heroLine2')}
               </span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={1} initial="hidden" animate="visible"
               className={`text-lg md:text-xl ${th.textSub} mb-10 max-w-2xl mx-auto leading-relaxed`}
             >
-              Śledź przychody i wydatki, działaj według budżetów i realizuj cele oszczędnościowe.<br className="hidden md:block" />
-              Prosto, przejrzyście i z finezyjnym designem.
+              {t('landing.heroSub1')}<br className="hidden md:block" />
+              {t('landing.heroSub2')}
             </motion.p>
 
             {/* CTAs */}
@@ -634,13 +600,13 @@ export default function LandingPage() {
               <Link to="/register"
                 className="group flex items-center gap-2 bg-teal-600 hover:bg-teal-500 text-white px-9 py-4 rounded-2xl text-base font-extrabold transition-all shadow-2xl shadow-teal-600/30 hover:shadow-teal-500/50 hover:-translate-y-1"
               >
-                Zacznij za darmo
+                {t('landing.ctaStart')}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link to="/login"
                 className={`flex items-center gap-2 ${th.textSub} hover:text-teal-400 px-9 py-4 rounded-2xl text-base font-medium border ${th.border} ${th.borderHover} ${th.hoverBg} transition-all`}
               >
-                Mam już konto
+                {t('landing.ctaHaveAccount')}
               </Link>
             </motion.div>
 
@@ -653,12 +619,12 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(20,184,166,0.07),transparent_60%)]" />
           <div className="max-w-6xl mx-auto relative">
             <motion.div className="text-center mb-16" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
-              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>Możliwości</p>
+              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>{t('landing.featLabel')}</p>
               <h2 className={`text-4xl md:text-5xl font-black tracking-tight mb-5 ${th.text}`}>
-                Wszystko w jednym miejscu — <Shiny>elegancko</Shiny>
+                {t('landing.featTitle')} <Shiny>{t('landing.featTitleShiny')}</Shiny>
               </h2>
               <p className={`${th.textSub} max-w-xl mx-auto text-[17px] leading-relaxed`}>
-                Minimalny design, zero zbędnych opcji. Wszystko skoncentrowane na tym, żebyś kontrolował finanse bez wysiłku.
+                {t('landing.featSub')}
               </p>
             </motion.div>
 
@@ -668,32 +634,32 @@ export default function LandingPage() {
                   icon: <TrendingUp size={22} />,
                   gradient: 'from-teal-500 to-teal-700',
                   glow: 'rgba(20,184,166,0.22)',
-                  title: 'Śledzenie wydatków',
-                  tag: 'Najpopularniejsze',
-                  desc: 'Każda transakcja pod kontrolą. Kategorie, filtry i historia, które prowadzą cię do lepszych decyzji.',
-                  features: ['Własne kategorie', 'Historia do przodu i do tyłu', 'Wyszukiwarka i filtry'],
+                  title: t('landing.feat1Title'),
+                  tag: t('landing.feat1Tag'),
+                  desc: t('landing.feat1Desc'),
+                  features: [t('landing.feat1a'), t('landing.feat1b'), t('landing.feat1c')],
                 },
                 {
                   icon: <Target size={22} />,
                   gradient: 'from-emerald-500 to-green-600',
                   glow: 'rgba(16,185,129,0.22)',
-                  title: 'Budżety i cele',
-                  tag: 'Motywujące',
-                  desc: 'Ustaw limity miesięczne i cele oszczędnościowe. Otrzymuj jasne alerty zanim wpadasz w zadłużenie.',
-                  features: ['Limity na miesiąc', 'Cele progresowe', 'Alerty przed przekroczeniem'],
+                  title: t('landing.feat2Title'),
+                  tag: t('landing.feat2Tag'),
+                  desc: t('landing.feat2Desc'),
+                  features: [t('landing.feat2a'), t('landing.feat2b'), t('landing.feat2c')],
                 },
                 {
                   icon: <BarChart2 size={22} />,
                   gradient: 'from-purple-500 to-violet-600',
                   glow: 'rgba(139,92,246,0.22)',
-                  title: 'Raporty i wykresy',
-                  tag: 'Nowe',
-                  desc: 'Interaktywny podgląd trendów w wybranym okresie, z eksportem CSV po jednym kliknięciu.',
-                  features: ['Miesięczne i kwartalne wykresy', 'Eksport do CSV', 'Porównanie okresów'],
+                  title: t('landing.feat3Title'),
+                  tag: t('landing.feat3Tag'),
+                  desc: t('landing.feat3Desc'),
+                  features: [t('landing.feat3a'), t('landing.feat3b'), t('landing.feat3c')],
                 },
-              ].map((f) => (
+              ].map((f, i) => (
                 <motion.div
-                  key={f.title}
+                  key={i}
                   variants={fadeUp}
                   className={`group relative border ${th.border} hover:border-teal-500/40 rounded-[24px] p-7 transition-all duration-500 overflow-hidden flex flex-col`}
                   style={{ backgroundColor: th.bgCard }}
@@ -714,8 +680,8 @@ export default function LandingPage() {
                     <p className={`${th.textSub} text-sm leading-relaxed`}>{f.desc}</p>
                     {/* Checkmarks pushed to bottom */}
                     <ul className="flex flex-col gap-2.5 mt-auto pt-5">
-                      {f.features.map(item => (
-                        <li key={item} className={`flex items-start gap-2.5 text-xs ${th.textSub}`}>
+                      {f.features.map((item, j) => (
+                        <li key={j} className={`flex items-start gap-2.5 text-xs ${th.textSub}`}>
                           <CheckCircle size={13} className="text-green-400 shrink-0 mt-0.5" />
                           {item}
                         </li>
@@ -733,14 +699,14 @@ export default function LandingPage() {
           <div className="max-w-5xl mx-auto px-6">
             <motion.div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               {[
-                { icon: <Lock size={16} />, text: 'Szyfrowanie SSL/TLS', color: 'text-green-400' },
-                { icon: <Shield size={16} />, text: 'Bezpieczny hosting', color: 'text-teal-400' },
-                { icon: <RefreshCw size={16} />, text: 'Automatyczne kopie', color: 'text-purple-400' },
-                { icon: <Bell size={16} />, text: 'Alerty budżetowe', color: 'text-yellow-400' },
-                { icon: <Globe size={16} />, text: '3 języki interfejsu', color: 'text-cyan-400' },
-                { icon: <Zap size={16} />, text: 'Błyskawiczne działanie', color: 'text-orange-400' },
-              ].map(({ icon, text, color }) => (
-                <motion.div key={text} variants={fadeUp} className={`flex items-center gap-2 text-sm font-medium ${th.textSub}`}>
+                { icon: <Lock size={16} />, text: t('landing.trust1'), color: 'text-green-400' },
+                { icon: <Shield size={16} />, text: t('landing.trust2'), color: 'text-teal-400' },
+                { icon: <RefreshCw size={16} />, text: t('landing.trust3'), color: 'text-purple-400' },
+                { icon: <Bell size={16} />, text: t('landing.trust4'), color: 'text-yellow-400' },
+                { icon: <Globe size={16} />, text: t('landing.trust5'), color: 'text-cyan-400' },
+                { icon: <Zap size={16} />, text: t('landing.trust6'), color: 'text-orange-400' },
+              ].map(({ icon, text, color }, i) => (
+                <motion.div key={i} variants={fadeUp} className={`flex items-center gap-2 text-sm font-medium ${th.textSub}`}>
                   <span className={color}>{icon}</span>
                   <span>{text}</span>
                 </motion.div>
@@ -754,17 +720,16 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.06),transparent_60%)]" />
           <div className="max-w-5xl mx-auto relative">
             <motion.div className="text-center mb-16" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
-              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>Jak to działa</p>
-              <h2 className={`text-4xl md:text-5xl font-black tracking-tight mb-5 ${th.text}`}>Gotowy w <Shiny>3 minuty</Shiny></h2>
-              <p className={`${th.textSub} text-[17px]`}>Zero konfiguracji. Zero karty kredytowej. Po prostu zacznij i kontroluj.</p>
+              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>{t('landing.howLabel')}</p>
+              <h2 className={`text-4xl md:text-5xl font-black tracking-tight mb-5 ${th.text}`}>{t('landing.howTitlePre')} <Shiny>{t('landing.howTitleShiny')}</Shiny></h2>
+              <p className={`${th.textSub} text-[17px]`}>{t('landing.howSub')}</p>
             </motion.div>
 
             <motion.div className="grid md:grid-cols-3 gap-8 relative" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}>
-              <div className="hidden md:block absolute top-[42px] left-[calc(33%+12px)] right-[calc(33%+12px)] h-px bg-gradient-to-r from-teal-500/0 via-teal-500/40 to-teal-500/0" />
               {[
-                { n: '01', title: 'Załóż konto', desc: 'Imię, e-mail i hasło. Rejestracja trwa blinkiem oka, nie proś o niepotrzebne rzeczy.', color: 'from-teal-500 to-teal-700', border: 'border-teal-500/25' },
-                { n: '02', title: 'Dodaj transakcje', desc: 'Stwórz własne kategorie i zacznij rejestrować, żeby mieć faktyczny obraz swoich finansów.', color: 'from-green-400 to-emerald-600', border: 'border-green-500/25' },
-                { n: '03', title: 'Realizuj cele', desc: 'Budżety i cele na żywo, inspeksja wykresów oraz dążenie do stabilności każdego miesiąca.', color: 'from-purple-500 to-violet-600', border: 'border-purple-500/25' },
+                { n: '01', title: t('landing.how1Title'), desc: t('landing.how1Desc'), color: 'from-teal-500 to-teal-700', border: 'border-teal-500/25' },
+                { n: '02', title: t('landing.how2Title'), desc: t('landing.how2Desc'), color: 'from-green-400 to-emerald-600', border: 'border-green-500/25' },
+                { n: '03', title: t('landing.how3Title'), desc: t('landing.how3Desc'), color: 'from-purple-500 to-violet-600', border: 'border-purple-500/25' },
               ].map((s) => (
                 <motion.div key={s.n} variants={fadeUp} className="flex flex-col items-center text-center group">
                   <div className={`relative w-[80px] h-[80px] rounded-[24px] bg-gradient-to-br ${s.color} text-white text-2xl font-black flex items-center justify-center mb-6 shadow-2xl border ${s.border} group-hover:-translate-y-1.5 transition-transform duration-300 overflow-hidden`}>
@@ -779,7 +744,7 @@ export default function LandingPage() {
 
             <motion.div className="text-center mt-14" initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.25 }}>
               <Link to="/register" className="group inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-500 text-white px-10 py-4 rounded-2xl font-extrabold transition-all shadow-2xl shadow-teal-600/30 hover:shadow-teal-500/50 hover:-translate-y-1">
-                Wypróbuj teraz – za darmo
+                {t('landing.howCta')}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -790,27 +755,33 @@ export default function LandingPage() {
         <section className={`py-20 px-6 border-y ${th.border}`} style={{ backgroundColor: th.bgSec }}>
           <div className="max-w-6xl mx-auto">
             <motion.div className="text-center mb-12" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>Opinie użytkowników</p>
-              <h2 className={`text-3xl md:text-4xl font-black tracking-tight ${th.text}`}>Co mówią, którzy już odgrali swój budżet?</h2>
+              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>{t('landing.testimLabel')}</p>
+              <h2 className={`text-3xl md:text-4xl font-black tracking-tight ${th.text}`}>{t('landing.testimTitle')}</h2>
             </motion.div>
-            <motion.div className="grid md:grid-cols-3 gap-5" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <motion.div className="grid md:grid-cols-3 gap-5 group/testimonials" variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
               {[
-                { name: 'Anna K.', role: 'Freelancerka', avatar: '#3b82f6', text: 'W końcu wiem, na co idą moje pieniądze. Prosta aplikacja, piękny design i zero frustracji. To jest coś dla początkujących, ale i ambitnych.', stars: 5 },
-                { name: 'Michał P.', role: 'Student', avatar: '#10b981', text: 'Używam od 3 miesięcy i naprawdę kontroluję wydatki. Alerty budżetowe są genialne, a wykresy pokazują rzeczy, których wcześniej nie widziałem.', stars: 5 },
-                { name: 'Kasia M.', role: 'Pracownik IT', avatar: '#8b5cf6', text: 'Szybko działa, eksport CSV jest cenny przy rozliczeniach, a interfejs przyjemny w użyciu. Chętnie polecam przynajmniej do wypróbowania.', stars: 5 },
-              ].map((t) => (
-                <motion.div key={t.name} variants={fadeUp} className={`rounded-[24px] p-6 border ${th.border} ${th.borderHover} transition-all`} style={{ backgroundColor: th.bgCard }}>
+                { name: t('landing.t1name'), role: t('landing.t1role'), avatar: '#3b82f6', text: t('landing.t1text'), stars: 5 },
+                { name: t('landing.t2name'), role: t('landing.t2role'), avatar: '#10b981', text: t('landing.t2text'), stars: 5 },
+                { name: t('landing.t3name'), role: t('landing.t3role'), avatar: '#8b5cf6', text: t('landing.t3text'), stars: 5 },
+              ].map((testim, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  className={`rounded-[24px] p-6 border transition-all duration-300 group-hover/testimonials:opacity-50 hover:!opacity-100 group-hover/testimonials:border-transparent hover:!border-teal-500/60 ${th.border}`}
+                  style={{ backgroundColor: th.bgCard }}
+                  whileHover={{ y: -5, boxShadow: isDark ? '0 20px 70px rgba(0,0,0,0.5)' : '0 20px 60px rgba(0,0,0,0.12)' }}
+                >
                   <div className="flex mb-3">
-                    {Array(t.stars).fill(0).map((_, i) => <Star key={i} size={13} className="text-yellow-400 fill-yellow-400" />)}
+                    {Array(testim.stars).fill(0).map((_, i) => <Star key={i} size={13} className="text-yellow-400 fill-yellow-400" />)}
                   </div>
-                  <p className={`${th.textSub} text-sm leading-relaxed mb-5`}>„{t.text}"</p>
+                  <p className={`${th.textSub} text-sm leading-relaxed mb-5`}>„{testim.text}"</p>
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black shadow-md" style={{ backgroundColor: t.avatar }}>
-                      {t.name[0]}
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-black shadow-md" style={{ backgroundColor: testim.avatar }}>
+                      {testim.name[0]}
                     </div>
                     <div>
-                      <p className={`text-sm font-semibold ${th.text}`}>{t.name}</p>
-                      <p className={`text-xs ${th.textMuted}`}>{t.role}</p>
+                      <p className={`text-sm font-semibold ${th.text}`}>{testim.name}</p>
+                      <p className={`text-xs ${th.textMuted}`}>{testim.role}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -823,15 +794,15 @@ export default function LandingPage() {
         <section id="faq" className="py-28 px-6">
           <div className="max-w-2xl mx-auto">
             <motion.div className="text-center mb-12" variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>FAQ</p>
-              <h2 className={`text-4xl font-black tracking-tight ${th.text}`}>Często zadawane pytania</h2>
+              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-4`}>{t('landing.faqLabel')}</p>
+              <h2 className={`text-4xl font-black tracking-tight ${th.text}`}>{t('landing.faqTitle')}</h2>
             </motion.div>
             <motion.div
               className={`rounded-2xl border ${th.border} px-7 py-1`}
               style={{ backgroundColor: th.bgCard }}
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
             >
-              {FAQ_DATA.map(item => <FAQItem key={item.q} q={item.q} a={item.a} />)}
+              {FAQ_DATA.map((item, i) => <FAQItem key={i} q={item.q} a={item.a} />)}
             </motion.div>
           </div>
         </section>
@@ -843,12 +814,12 @@ export default function LandingPage() {
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-[16px] bg-teal-500/15 border border-teal-500/25 mb-5">
                 <Mail size={20} className="text-teal-400" />
               </div>
-              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-3`}>Newsletter</p>
+              <p className={`text-[10px] font-bold uppercase tracking-[0.2em] ${th.teal} mb-3`}>{t('landing.newsletterLabel')}</p>
               <h2 className={`text-3xl md:text-4xl font-black tracking-tight mb-4 ${th.text}`}>
-                Bądź na bieżąco z nowościami
+                {t('landing.newsletterTitle')}
               </h2>
               <p className={`${th.textSub} mb-8 max-w-sm mx-auto`}>
-                Nowe funkcje, wskazówki finansowe i ekskluzywne porady — prosto na Twój e-mail.
+                {t('landing.newsletterSub')}
               </p>
 
               {newsletterSent ? (
@@ -858,7 +829,7 @@ export default function LandingPage() {
                   className="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-green-400 px-6 py-3 rounded-2xl font-semibold"
                 >
                   <CheckCircle size={16} />
-                  Dziękujemy! Sprawdź swoją skrzynkę mailową.
+                  {t('landing.newsletterSuccess')}
                 </motion.div>
               ) : (
                 <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -866,7 +837,7 @@ export default function LandingPage() {
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    placeholder="twoj@email.pl"
+                    placeholder={t('landing.newsletterPlaceholder')}
                     required
                     className={`flex-1 border ${th.border} rounded-xl px-4 py-3 text-sm outline-none transition-colors focus:border-teal-500 ${th.text} placeholder:${th.textMuted}`}
                     style={{ backgroundColor: th.bgCard }}
@@ -875,11 +846,11 @@ export default function LandingPage() {
                     type="submit"
                     className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-3 rounded-xl font-extrabold text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-teal-600/20 whitespace-nowrap"
                   >
-                    Zapisz się →
+                    {t('landing.newsletterBtn')}
                   </button>
                 </form>
               )}
-              <p className={`mt-4 text-xs ${th.textMuted}`}>Bez spamu. Możesz wypisać się w każdej chwili.</p>
+              <p className={`mt-4 text-xs ${th.textMuted}`}>{t('landing.newsletterNote')}</p>
             </motion.div>
           </div>
         </section>
@@ -895,19 +866,19 @@ export default function LandingPage() {
             <div className="absolute -bottom-32 -left-24 w-[460px] h-[460px] rounded-full bg-indigo-900/35" />
             <div className="relative z-10 py-20 px-8 text-center">
               <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white/90 text-[11px] font-semibold px-4 py-1.5 rounded-full mb-6">
-                <Zap size={11} className="fill-white" /> Dołącz za darmo
+                <Zap size={11} className="fill-white" /> {t('landing.ctaBadge')}
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight">
-                Zacznij kontrolować<br />swoje finanse — <Shiny>teraz</Shiny>.
+                {t('landing.ctaTitle1')}<br />{t('landing.ctaTitle2')} <Shiny>{t('landing.ctaTitleShiny')}</Shiny>.
               </h2>
               <p className="text-blue-100/80 text-lg mb-10 max-w-md mx-auto">
-                Bez karty kredytowej. Bez limitów. Rejestracja w 30 sekund.
+                {t('landing.ctaSub')}
               </p>
               <Link to="/register" className="group inline-flex items-center gap-2 bg-white text-teal-700 font-black px-10 py-4 rounded-2xl text-lg hover:bg-teal-50 transition-all shadow-2xl hover:-translate-y-1">
-                Załóż darmowe konto
+                {t('landing.ctaBtn')}
                 <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <p className="mt-5 text-teal-200/60 text-xs">Dołącz do osób, które już wybrali stabilność finansową</p>
+              <p className="mt-5 text-teal-200/60 text-xs">{t('landing.ctaNote')}</p>
             </div>
           </motion.div>
         </section>
@@ -924,10 +895,6 @@ export default function LandingPage() {
                   </p>
                   <p className={`text-[10px] ${th.textFaint} mt-0.5`}>© {new Date().getFullYear()} Wszelkie prawa zastrzeżone.</p>
                 </div>
-              </div>
-              <div className={`flex items-center gap-2 text-xs ${th.textFaint}`}>
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                Wszystkie systemy działają
               </div>
             </div>
           </div>
