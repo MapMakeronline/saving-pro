@@ -13,7 +13,7 @@ export function SkeletonStatCards() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 space-y-3">
+        <div key={i} className="bg-white dark:bg-[#0f1629] rounded-2xl p-5 shadow-sm dark:shadow-none space-y-3">
           <SkeletonBox className="h-4 w-24" />
           <SkeletonBox className="h-8 w-32" />
           <SkeletonBox className="h-3 w-20" />
@@ -67,7 +67,7 @@ export function SkeletonCards({ count = 4 }: { count?: number }) {
 
 export function SkeletonChart() {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-100 dark:border-slate-700">
+    <div className="bg-white dark:bg-[#0f1629] rounded-2xl p-6 shadow-sm dark:shadow-none">
       <SkeletonBox className="h-5 w-40 mb-6" />
       <div className="flex items-end gap-3 h-48">
         {[60, 80, 50, 90, 70, 85, 65].map((h, i) => (

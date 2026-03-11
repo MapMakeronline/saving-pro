@@ -3,14 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Eye, EyeOff, AlertCircle, Mail } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import emailjs from '@emailjs/browser'
-import { doc, setDoc } from 'firebase/firestore'
-import { db } from '../lib/firebase'
 import { useAuthStore } from '../store/authStore'
-
-const EMAILJS_SERVICE = 'service_0yqwwlv'
-const EMAILJS_TEMPLATE = 'template_wjo0ltk'
-const EMAILJS_PUBLIC_KEY = 'Ef_Dccdf-Zv6Il2He'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -68,17 +61,6 @@ export default function RegisterPage() {
     try {
       await register(formData.email, formData.password, formData.name)
       setEmailSent(true)
-      // send verification email in background (non-blocking)
-      const token = crypto.randomUUID()
-      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-      setDoc(doc(db, 'emailVerifications', token), { email: formData.email, expiry, used: false })
-        .then(() => emailjs.send(
-          EMAILJS_SERVICE,
-          EMAILJS_TEMPLATE,
-          { name: formData.name, verification_link: `${window.location.origin}/verify?token=${token}` },
-          EMAILJS_PUBLIC_KEY,
-        ))
-        .catch(() => { /* email sending failed silently */ })
     } catch {
       // error is set in store
     }

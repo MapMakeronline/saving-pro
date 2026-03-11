@@ -11,6 +11,7 @@ import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import Profile from './pages/Profile'
 import VerifyEmailPage from './pages/VerifyEmailPage'
+import VerifyPendingPage from './pages/VerifyPendingPage'
 import NotFound404 from './pages/NotFound404'
 import AppLayout from './components/layout/AppLayout'
 import ProtectedRoute from './components/common/ProtectedRoute'
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify" element={<VerifyEmailPage />} />
+      <Route path="/verify-pending" element={<VerifyPendingPage />} />
 
       {/* Private Routes – wrapped with AppLayout + ProtectedRoute */}
       <Route
