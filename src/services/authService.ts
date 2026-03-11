@@ -8,8 +8,12 @@ import {
   FacebookAuthProvider,
   OAuthProvider,
   signInWithPopup,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+  deleteUser,
 } from 'firebase/auth'
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs } from 'firebase/firestore'
 import { auth, db } from '../lib/firebase'
 import type { User, LoginCredentials, RegisterCredentials, AuthResponse } from '../types'
 
@@ -96,5 +100,39 @@ export const authService = {
 
   async logout(): Promise<void> {
     await signOut(auth)
+  },
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const fb = auth.currentUser
+    if (!fb || !fb.email) throw new Error('Nie zalogowany')
+    const credential = EmailAuthProvider.credential(fb.email, currentPassword)
+    await reauthenticateWithCredential(fb, credential)
+    await updatePassword(fb, newPassword)
+  },
+
+  async deleteAccount(): Promise<void> {
+    const fb = auth.currentUser
+    if (!fb) throw new Error('Nie zalogowany')
+    const uid = fb.uid
+    // Delete all subcollections
+    for (const col of ['transactions', 'categories', 'budgets', 'goals']) {
+      const snap = await getDocs(collection(db, 'users', uid, col))
+      await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)))
+    }
+    await deleteDoc(doc(db, 'users', uid))
+    await deleteUser(fb)
+  },
+
+  async updateNotifications(prefs: Record<string, boolean>): Promise<void> {
+    const fb = auth.currentUser
+    if (!fb) throw new Error('Nie zalogowany')
+    await updateDoc(doc(db, 'users', fb.uid), { notifications: prefs, updatedAt: new Date().toISOString() })
+  },
+
+  async getNotifications(): Promise<Record<string, boolean>> {
+    const fb = auth.currentUser
+    if (!fb) throw new Error('Nie zalogowany')
+    const snap = await getDoc(doc(db, 'users', fb.uid))
+    return snap.data()?.notifications || {}
   },
 }
